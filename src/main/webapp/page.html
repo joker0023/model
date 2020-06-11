@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	<title>test</title>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	<div class="container">
+		this is page ...
+	</div>
+	
+	<script type="text/javascript">
+		function getParams() {
+			var search = location.search;
+			if (search.startsWith('?')) {
+				search = search.substring(1);
+			}
+			var paramArr = search.split('&');
+			var params = {};
+			paramArr.forEach((a) => {
+				var arr = a.split('=');
+				if (arr.length > 1) {
+					params[arr[0]] = arr[1];
+				}
+			});
+			
+			console.log(params);
+			return params;
+		}
+		
+	</script>
+</body>
+</html>

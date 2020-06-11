@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <properties>
+        <property name="LOG_HOME">/data/logs</property>
+        <property name="APP_NAME">model</property>
+    </properties>
+
+    <Appenders>
+        <RollingFile name="LogFile" fileName="${LOG_HOME}/${APP_NAME}/common.log" 
+        	filePattern="${LOG_HOME}/${APP_NAME}/common-%d{yyyy-MM-dd}.log">
+    		<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %c:%L[%t] - [%X{trace}]%m%n"/>
+    		<Policies>
+    			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
+    		</Policies>
+    		<DefaultRolloverStrategy max="10"/>
+    	</RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="WARN">
+            <AppenderRef ref="LogFile" />
+        </Root>
+        <Logger name="com.jokerstation" level="INFO" additivity="true"></Logger>
+        <Logger name="org" level="WARN" additivity="true">
+        </Logger>
+    </Loggers>
+</Configuration>

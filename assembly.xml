@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>zip</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>NOTICE*</include>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/classes</directory>
+            <outputDirectory>./config</outputDirectory>
+            <includes>
+                <include>application.properties</include>
+                <include>log4j2-common.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/classes/sh</directory>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>svc-ctrl.sh</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
