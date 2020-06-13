@@ -5,67 +5,88 @@
 		<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 		<title>Index</title>
 		<link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./assets/css/index.css">
 		<style type="text/css">
-			body {
-				background-image: linear-gradient(to bottom , #3399FF, #fff);
-				min-height: 100vh;
-				font-family: "Comic Sans MS", cursive, sans-serif;
-				/*background-color: #f3f7fb;*/
-			}
-			.navbar-brand,
-			.navbar-brand:hover,
-			.navbar-brand:active,
-			.navbar-brand:focus {
-				font-size: 40px;
-				line-height: 40px;
-				color: #fff;
-			}
-			.nav > li > a {
-				font-size: 40px;
-				line-height: 40px;
-				color: #fff;
-			}
-			.nav > li > a:hover,
-			.nav > li > a:focus {
-				background: none;
-				color: #FFFFCC;
-			}
-			.jumbotron {
-				background: none;
-				color: #eee;
-			}
+			
 		</style>
 	</head>
 	<body>
-		<div class="navbar">
+		<div class="navbar navbar-default">
 			<div class="container">
 				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
 				        <span class="sr-only">Toggle navigation</span>
 				        <span class="icon-bar"></span>
 				        <span class="icon-bar"></span>
 				        <span class="icon-bar"></span>
 			      	</button>
-			      	<a class="navbar-brand" href="#">(￣▽￣)"</a>
+			      	<a class="navbar-brand" href="/">(￣▽￣)"</a>
 				</div>
-				<div class="collapse navbar-collapse">
+				<div class="collapse navbar-collapse" id="navbar-collapse-1">
 					<ul class="nav navbar-nav navbar-right js-pageSwitch">
-						<li><a href="javascript:void();" data-type="pg">PG</a></li>
-						<li><a href="javascript:void();" data-type="mg">MG</a></li>
-						<li><a href="javascript:void();" data-type="rg">RG</a></li>
-						<li><a href="javascript:void();" data-type="sd">SD</a></li>
+						<li><a href="javascript:void(0);" data-type="pg">PG</a></li>
+						<li><a href="javascript:void(0);" data-type="mg">MG</a></li>
+						<li><a href="javascript:void(0);" data-type="rg">RG</a></li>
+						<li><a href="javascript:void(0);" data-type="sd">SD</a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		<div class="container">
-			<div class="jumbotron">
-				<h1>This is BASE-BOOT</h1>
-	  			<p>this is just a test page, if you have seen this, now this server is ok and the boot project is ok too.</p>
+		<div class="index-container">
+			<div class="jumbotron-img">
+				<img alt="gn" src="./assets/img/index01.jpg">
+			</div>
+			<div class="index-content container-fluid">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 model-img">
+						<img alt="" src="./assets/img/index02.png">
+					</div>
+					<div class="col-xs-12 col-sm-6 hidden-xs">
+						<img alt="" src="./assets/img/index021.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 hidden-xs">
+						<img alt="" src="./assets/img/index031.png">
+					</div>
+					<div class="col-xs-12 col-sm-6 model-img">
+						<img alt="" src="./assets/img/index03.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 model-img">
+						<img alt="" src="./assets/img/index04.png">
+					</div>
+					<div class="col-xs-12 col-sm-6 hidden-xs">
+						<img alt="" src="./assets/img/index041.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 hidden-xs">
+						<img alt="" src="./assets/img/index051.png">
+					</div>
+					<div class="col-xs-12 col-sm-6 model-img">
+						<img alt="" src="./assets/img/index05.png">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 model-img">
+						<img alt="" src="./assets/img/index06.png">
+					</div>
+					<div class="col-xs-12 col-sm-6 hidden-xs">
+						<img alt="" src="./assets/img/index061.png">
+					</div>
+				</div>
 			</div>
 		</div>
+		
+		<div class="item-list">
+		
+		</div>
+		
 	
-		<script type="text/javascript" src="./assets/js/jquery-3.4.1.min.js"></script>
+		<script type="text/javascript" src="./assets/jquery/jquery-3.4.1.min.js"></script>
 		<script type="text/javascript" src="./assets/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="./assets/js/index.js"></script>
 	</body>
 </html>

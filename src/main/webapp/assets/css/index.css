@@ -1,0 +1,78 @@
+body {
+	background-image: linear-gradient(to bottom, #3399FF, #fff);
+	min-height: 100vh;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	/*background-color: #f3f7fb;*/
+}
+
+.navbar-default {
+	border-color: #3399FF;
+	background: none;
+}
+
+.navbar-default .navbar-toggle {
+	border-color: #fff;
+}
+.navbar-default .navbar-toggle .icon-bar {
+	background-color: #fff;	
+}
+.navbar-default .navbar-toggle:focus, 
+.navbar-default .navbar-toggle:hover {
+	background-color: #3399FF;	
+}
+
+.navbar-brand {
+	height: 70px;
+}
+.navbar-default .navbar-brand, 
+.navbar-default .navbar-brand:hover, 
+.navbar-default .navbar-brand:active, 
+.navbar-default .navbar-brand:focus
+	{
+	font-size: 40px;
+	line-height: 40px;
+	color: #fff;
+}
+
+.navbar-default .nav>li>a {
+	font-size: 40px;
+	line-height: 40px;
+	color: #fff;
+	background: none;
+}
+
+.navbar-default .nav>li>a:hover, 
+.navbar-default .nav>li>a:active,
+.navbar-default .nav>li>a:focus {
+	color: #FFFFCC;
+}
+.navbar-default .nav .active {
+	color: #FFFFCC;
+}
+
+.index-container {
+	display: none;
+}
+.jumbotron-img {
+	border-top: 1px solid #FFFFCC;
+	border-bottom: 1px solid #FFFFCC;
+}
+.jumbotron-img img {
+	width: 100%;
+}
+.index-content {
+	padding: 15px;
+}
+.index-content .row {
+	margin-bottom: 15px;
+}
+.index-content .model-img img {
+	border: 1px solid #FFFFCC;
+}
+.index-content img {
+	width: 100%;
+}
+
+.item-list {
+	display: none;
+}
