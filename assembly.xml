@@ -29,5 +29,9 @@
                 <include>svc-ctrl.sh</include>
             </includes>
         </fileSet>
+        <fileSet>
+        	<directory>${project.build.directory}/../src/main/webapp</directory>
+        	<outputDirectory>./html</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>

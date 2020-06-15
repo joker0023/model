@@ -23,11 +23,11 @@ mkdir -p ${SERVICEAPP_LOGHOME}
 cd ${SERVICEAPP_DEPHOME}
 
 #JVM CONFIG
-JAVA_OPTS="-Xms2048m -Xmx2048m  \
--XX:PermSize=128M \
--XX:MaxPermSize=256m \
+JAVA_OPTS="-Xms128m -Xmx128m  \
+-XX:PermSize=32M \
+-XX:MaxPermSize=32m \
 -Xss1m \
--Xmn1024m \
+-Xmn64m \
 -XX:+AggressiveOpts \
 -XX:+UseBiasedLocking \
 -XX:+CMSParallelRemarkEnabled \
