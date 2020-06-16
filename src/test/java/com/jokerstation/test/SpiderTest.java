@@ -19,29 +19,27 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jokerstation.common.util.JsonUtils;
 import com.jokerstation.common.util.WebUtil;
-import com.jokerstation.model.pojo.ModelItem;
+import com.jokerstation.model.BootApplication;
 import com.jokerstation.model.service.SpiderGundamService;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = BootApplication.class)
 public class SpiderTest {
+	
+	private static Logger logger = LoggerFactory.getLogger(SpiderTest.class);
 
 	public static void main(String[] args) throws Exception {
 //		spider();
 
 		new SpiderGundamService().downloadPg();
-		
-//		String url = "https://detail.tmall.com/item.htm?id\\u003d611513483790\\u0026rn\\u003ddbce306ba28a2db9f4baa3b9071ef9c8\\u0026abbucket\\u003d7";
-//		
-//		Pattern pattern = Pattern.compile("\\\\u([a-f0-9A-F]{1,4})");
-//		Matcher m = pattern.matcher(url);
-//		while (m.find()) {
-//			String s = (char)Integer.parseInt(m.group(1), 16) + "";
-//			url = url.replace(m.group(), s);
-//		}
-		
-//		url = url.replaceAll(, (char)Integer.parseInt("$0", 16) + "");
 		
 		System.out.println("== over ==");
 	}

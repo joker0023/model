@@ -1,12 +1,18 @@
 package com.jokerstation.model.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
+
+import javax.persistence.Id;
 
 import lombok.Data;
 
 @Data
-public class ModelItem {
+public class ModelItem implements Serializable {
+	
+	private static final long serialVersionUID = 2445430389801083496L;
 
+	@Id
 	private Long id;
 	
 	private String url;
@@ -20,6 +26,15 @@ public class ModelItem {
 	private String detailImg;
 	
 	private String localDetailImg;
+	
+	private String type;
+	
+	/**
+	 * 0 初始
+	 * 1 成功
+	 * 2 失败
+	 */
+	private Integer status;
 	
 	private Date created;
 }

@@ -17,6 +17,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.jokerstation.common.util.JsonUtils;
@@ -26,21 +28,46 @@ import com.jokerstation.model.pojo.ModelItem;
 
 public class SpiderGundamService {
 	
+	private static Logger logger = LoggerFactory.getLogger(SpiderGundamService.class);
+	
 	private ThreadPoolTaskExecutor downloadPool = new ThreadPoolConfig().downloadPool();
 	
 	private static final String BASEDIR = "html";
 	
 	public void downloadPg() throws Exception {
-		String dir = "/gundam/pg";
-		String url = "https://bandai.tmall.com/i/asynSearch.htm?_ksTS=1591957229605_521&callback=jsonp522&mid=w-17160282518-0&wid=17160282518&path=/category-1460930310.htm&spm=a1z10.1-b-s.w4006-21334893843.37.4b0f5562R5X45S&scene=taobao_shop&catId=1460930310&scid=1460930310";
-		List<ModelItem> itemList = downloadPage(dir, url);
-		for (ModelItem item : itemList) {
-			System.out.println(item.getTitle());
-			System.out.println(item.getUrl());
-		}
+//		String dir = "/gundam/pg";
+		String type = "pg";
+		String url = "https://bandai.tmall.com/category-1460930310.htm"; //?pageNo=2
+		downloadOneType(type, url);
 	}
 	
-	public List<ModelItem> downloadPage(String dir, String url) throws Exception {
+	private void downloadOneType(String type, String url) throws Exception {
+		for (int i = 1; i < 50; i++) {
+			String pageUrl = url;
+			if (i > 1) {
+				pageUrl = url + "?pageNo=" + i;
+			}
+			List<ModelItem> itemList = downloadPage(pageUrl);
+			logger.info("itemList-size: " + itemList.size());
+			
+			if (itemList.size() == 0) {
+				break;
+			}
+			
+			for (ModelItem item : itemList) {
+				item.setType(type);
+//				System.out.println(item.getTitle());
+//				System.out.println(item.getUrl());
+			}
+		}
+		
+		
+	}
+	
+	private List<ModelItem> downloadPage(String pageUrl) throws Exception {
+		logger.info("pageUrl: " + pageUrl);
+		String url = getShopAsynSearchURL(pageUrl);
+		logger.info("asynSearchURL: " + url);
 		Map<String, String> header = getHeader(null);
 		header.put("Host", "bandai.tmall.com");
 		String result = WebUtil.doGet(url, header).trim();
@@ -48,57 +75,90 @@ public class SpiderGundamService {
 		if (result.startsWith(jsonpName)) {
 			result = result.substring(jsonpName.length());
 			result = result.substring(0, result.length() - 1);
+			
+			if (!result.startsWith("\"")) {
+				System.out.println(result);
+				throw new RuntimeException("cookies 过时了！");
+			}
+			result = JsonUtils.toBean(result, String.class);
+		} else {
+			result = "\"" + result + "\"";
+			result = JsonUtils.toBean(result, String.class);
 		}
-		if (!result.startsWith("\"")) {
-			System.out.println(result);
+		
+		Document doc = Jsoup.parse(result);
+		Elements jItems = doc.select(".J_TItems");
+		if (jItems.size() == 0) {
 			throw new RuntimeException("cookies 过时了！");
 		}
 		
-		result = JsonUtils.toBean(result, String.class);
-		Document doc = Jsoup.parse(result);
-		Elements elements = doc.select(".J_TItems").select(".item");
-		
 		List<ModelItem> itemList = new ArrayList<ModelItem>();
-		for (Element item : elements) {
-			Element itemName = item.select(".detail").select(".item-name").first();
-			String itemUrl = itemName.attr("href");
-			if (itemUrl.startsWith("//")) {
-				itemUrl = "https:" + itemUrl;
+		for (Element ele : jItems.first().children()) {
+			String className = ele.attr("class");
+			if (!"item4line1".equals(className)) {
+				break;
 			}
-			itemUrl = unicodeToStr(itemUrl);
-			String title = itemName.text();
 			
-			ModelItem modelItem = new ModelItem();
-			modelItem.setUrl(itemUrl);
-			modelItem.setTitle(title);
-			itemList.add(modelItem);
+			Elements items = ele.select(".item");
+			for (Element item : items) {
+				Element itemNameEle = item.select(".detail").select(".item-name").first();
+				String itemUrl = itemNameEle.attr("href");
+				if (itemUrl.startsWith("//")) {
+					itemUrl = "https:" + itemUrl;
+				}
+				itemUrl = unicodeToStr(itemUrl);
+				String title = itemNameEle.text();
+				
+				ModelItem modelItem = new ModelItem();
+				modelItem.setUrl(itemUrl);
+				modelItem.setTitle(title);
+				modelItem.setStatus(0);
+				itemList.add(modelItem);
+			}
 		}
 		
 		return itemList;
 	}
 	
-	private void downloadItem(String dir, String url) throws Exception {
+	private String getShopAsynSearchURL(String url) throws Exception {
 		Map<String, String> header = getHeader(null);
-		header.put("Host", "detail.tmall.com");
-		String result = WebUtil.doGet(url, header);
+		header.put("Host", "bandai.tmall.com");
+		String result = WebUtil.doGet(url, header).trim();
 		Document doc = Jsoup.parse(result);
-		
-		ModelItem item = new ModelItem();
-		String title = getTitle(doc);
-		String coverImg = getCoverImg(doc);
-		String detailImg = getDetailImg(doc);
-		item.setTitle(title);
-		item.setCoverImg(coverImg);
-		item.setDetailImg(detailImg);
-		item.setCreated(new Date());
-		item.setUrl(url);
-		String localCoverImg = downloadImg(dir, coverImg);
-		item.setLocalCoverImg(localCoverImg);
-		String localDetailImg = downloadImg(dir, detailImg);
-		item.setLocalDetailImg(localDetailImg);
-		
-		//TODO: save
-		System.out.println(JsonUtils.toJson(item));
+		String shopAsynSearchURL = doc.select("#J_ShopAsynSearchURL").attr("value");
+		if (StringUtils.isNotBlank(shopAsynSearchURL)) {
+			return "https://bandai.tmall.com" + shopAsynSearchURL;
+		} else {
+			throw new RuntimeException("没有找到搜索url");
+		}
+	}
+	
+	private void downloadItem(ModelItem modelItem) throws Exception {
+		try {
+//			Map<String, String> header = getHeader(null);
+//			header.put("Host", "detail.tmall.com");
+//			String result = WebUtil.doGet(modelItem.getUrl(), header);
+//			Document doc = Jsoup.parse(result);
+//			
+//			String title = getTitle(doc);
+//			String coverImg = getCoverImg(doc);
+//			String detailImg = getDetailImg(doc);
+//			
+//			ModelItem item = new ModelItem();
+//			item.setTitle(title);
+//			item.setCoverImg(coverImg);
+//			item.setDetailImg(detailImg);
+//			item.setCreated(new Date());
+//			String localCoverImg = downloadImg(dir, coverImg);
+//			item.setLocalCoverImg(localCoverImg);
+//			String localDetailImg = downloadImg(dir, detailImg);
+//			item.setLocalDetailImg(localDetailImg);
+			
+			//TODO: save
+//			System.out.println(JsonUtils.toJson(item));
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 	private String getTitle(Document doc) throws Exception {
@@ -175,7 +235,7 @@ public class SpiderGundamService {
 		return s.substring(startIndex + startStr.length(), endIndex);
 	}
 	
-	public String unicodeToStr(String url) {
+	private String unicodeToStr(String url) {
 		Pattern pattern = Pattern.compile("\\\\u([a-f0-9A-F]{1,4})");
 		Matcher m = pattern.matcher(url);
 		while (m.find()) {
