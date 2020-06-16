@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.Header;
@@ -39,7 +40,9 @@ public class SpiderTest {
 	public static void main(String[] args) throws Exception {
 //		spider();
 
-		new SpiderGundamService().downloadPg();
+//		new SpiderGundamService().downloadPg();
+		String s = "shisi456852";
+		System.out.println(DigestUtils.md5Hex(s));
 		
 		System.out.println("== over ==");
 	}

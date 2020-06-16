@@ -36,5 +36,7 @@ public class ModelItem implements Serializable {
 	 */
 	private Integer status;
 	
+	private Boolean open;
+	
 	private Date created;
 }

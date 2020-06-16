@@ -5,11 +5,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jokerstation.model.interceptor.ConsoleInterceptor;
 
 @Configuration
 public class WebAppConfig implements WebMvcConfigurer {
@@ -28,17 +30,11 @@ public class WebAppConfig implements WebMvcConfigurer {
 	 * 添加Interceptor
 	 */
 	
-//	@Override
-//	public void addInterceptors(InterceptorRegistry registry) {
-////		校验是否有登陆，是否有权限
-//		List<String> excludePathPatterns = new ArrayList<>();
-//		excludePathPatterns.add("/downLoad/**");
-//		excludePathPatterns.add("/error");
-//		excludePathPatterns.add("/test/**");
-//
-//	    registry.addInterceptor(new MyCtrlInterceptor())
-//	    .addPathPatterns("/**").excludePathPatterns(excludePathPatterns);
-//	}
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+	    registry.addInterceptor(new ConsoleInterceptor())
+	    .addPathPatterns("/console/**");
+	}
 	
 	/**
 	 * 添加filter

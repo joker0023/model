@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+	<title>Console</title>
+	<link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="rows" style="margin-top: 50px;">
+			<div class="col-xs-12 col-sm-4 col-sm-offset-8">
+				<form>
+					<div class="form-group">
+					    <label for="user">User</label>
+					    <input type="text" class="form-control" id="user" placeholder="User">
+				  	</div>
+				  	<div class="form-group">
+					    <label for="password">Password</label>
+					    <input type="password" class="form-control" id="password" placeholder="Password">
+				  	</div>
+				  	<div class="form-group">
+				  		<button type="button" class="btn btn-default login-btn">Submit</button>
+				  	</div>
+				  	<div>
+				  		<div class="alert alert-warning alert-dismissible fade in hidden"></div>
+				  	</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<script type="text/javascript" src="/assets/jquery/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		({
+			init: function() {
+				$('.login-btn').click(function() {
+					var user = $('#user').val();
+					var password = $('#password').val();
+					
+					if (!user || !password) {
+						return;
+					}
+					
+					var data = {
+						user: user,
+						password: password
+					};
+					
+					$.ajax({
+						type: 'post',
+						url: '/auth/consoleLogin',
+						contentType: 'application/json',
+						data: JSON.stringify(data),
+						success: function(resp) {
+							console.log(resp);
+							if (resp.code == 0) {
+								location.href = '/console/item-list.html';
+							} else {
+								$('.alert-warning').text(resp.errorMsg);
+								$('.alert-warning').removeClass('hidden');
+							}
+						},
+						error: function(resp) {
+							console.error(resp);
+						}
+					});
+				});
+			}
+		}).init();
+	</script>
+</body>
+</html>
