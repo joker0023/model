@@ -1,34 +1,71 @@
 ({
 	init: function() {
 		this.$index = $('.index-container');
-		this.$itemList = $('.item-list');
+		this.$itemListContainer = $('.item-list-container');
+		this.$pageSwitch = $('.js-pageSwitch');
+		this.itemListTpl = $('#itemListTpl').html();
+		this.$moreBtn = $('.js-moreBtn');
+		this.items = [];
+		this.size = 20;
 		this.initFunction();
 		var param = this.getParams();
 		this.loadPage(param.type);
 	},
 	initFunction: function() {
 		var self = this;
-		$('.js-pageSwitch a').click(function() {
+		self.$pageSwitch.on('click', 'a:not(.active)', function() {
 			var type = $(this).data('type');
 			location.hash = 'type=' + type;
 			self.loadPage(type);
 		});
+		$(document).scroll(function(e) {
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+			var clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+			var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+			if (scrollHeight > clientHeight && scrollTop + clientHeight === scrollHeight) {
+				self.loadItemList();
+			}
+		});
+		self.$moreBtn.click(function() {
+			self.loadItemList();
+		});
 	},
 	loadPage: function(type) {
+		var self = this;
 		if (!type) {
-			this.$index.show();
+			self.$index.show();
 			return;
 		}
 		
-		this.$index.hide();
-		this.$itemList.show();
-		this.$itemList.text(type);
-		$('.js-pageSwitch a').removeClass('active');
-		$('.js-pageSwitch a[data-type=' + type + ']').addClass('active');
+		self.$pageSwitch.find('a').removeClass('active');
+		self.$pageSwitch.find('a[data-type=' + type + ']').addClass('active');
+		self.$itemListContainer.find('.breadcrumb .active').text(type);
+		self.$index.hide();
+		self.$itemListContainer.show();
+		self.$itemListContainer.find('.item-list').html('');
+		self.getAndloadItemList(type);
+	},
+	getAndloadItemList: function(type) {
+		var self = this;
+		self.items = [];
+		console.log('type: ', type);
+		$.get('/gundam/getModelItems?type=' + type, function(resp) {
+			if (resp.code != 0) {
+				return;
+			}
+			self.items = resp.data;
+			self.loadItemList();
+		});
 	},
 	loadItemList: function() {
-		var title = '万代模型 SDCS 高达 巴巴托斯 天狼帝王型';
-		var img = 'https://img.alicdn.com/imgextra/i3/833261111/O1CN017SxBhi1K4scwDMp3d_!!833261111-2-lubanu-s.png_430x430q90.jpg';
+		var self = this;
+		console.log(self.items);
+		if (self.items.length == 0){
+			return;
+		}
+		var items = self.items.splice(0, self.size);
+		var html = template.compile(self.itemListTpl)({items: items});
+		self.$itemListContainer.find('.item-list').append(html);
 	},
 	getParams: function() {
 		var search = location.hash;

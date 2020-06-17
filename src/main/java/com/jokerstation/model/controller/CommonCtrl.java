@@ -12,6 +12,7 @@ public class CommonCtrl {
 	
 	@RequestMapping("/test")
 	public String test() {
+		logger.info("test in ...");
 //		logger.debug("debug log test");
 //		logger.info("info log test");
 //		logger.warn("warn log test");

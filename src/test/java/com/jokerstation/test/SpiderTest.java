@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.WebUtils;
 
 import com.jokerstation.common.util.JsonUtils;
 import com.jokerstation.common.util.WebUtil;
@@ -39,10 +40,11 @@ public class SpiderTest {
 
 	public static void main(String[] args) throws Exception {
 //		spider();
-
-//		new SpiderGundamService().downloadPg();
-		String s = "shisi456852";
-		System.out.println(DigestUtils.md5Hex(s));
+		
+		String url = "https://detail.tmall.com/item.htm?id=16009624681&rn=147c03bb025961083b93ec75dcc13969&abbucket=";
+		Map<String, String> header = getHeader(null);
+		header.put("Host", "detail.tmall.com");
+		String result = WebUtil.doGet(url, header);
 		
 		System.out.println("== over ==");
 	}
