@@ -29,10 +29,10 @@ public class ConsoleInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object paramObject) throws Exception {
 		String consoleUser = getConsoleUser(request);
-//		if (null == consoleUser) {
-//			setResponse(response, 403, "非法访问");
-//			return false;
-//		}
+		if (null == consoleUser) {
+			setResponse(response, 403, "非法访问");
+			return false;
+		}
 		
 		return true;
 	}

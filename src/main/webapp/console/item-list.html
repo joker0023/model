@@ -29,33 +29,23 @@
 		<div class="container">
 			<div class="tab-content">
 				<ol class="breadcrumb">
-				  <li><a href="/console/item-list.html">Home</a></li>
+				  <li><a href="javascript:void(0);">Home</a></li>
 				  <li class="active">-</li>
 				</ol>
 			</div>
-			<div class="btn-group js-tabChange" role="group" aria-label="...">
-				<button type="button" class="btn btn-default" data-type="pg">PG</button>
-				<button type="button" class="btn btn-default" data-type="mg">MG</button>
-				<button type="button" class="btn btn-default" data-type="rg">RG</button>
-				<button type="button" class="btn btn-default" data-type="sd">SD</button>
+			<div class="js-operationContainer">
+				<div class="btn-group js-tabChange" role="group" aria-label="...">
+					<button type="button" class="btn btn-default" data-type="pg">PG</button>
+					<button type="button" class="btn btn-default" data-type="mg">MG</button>
+					<button type="button" class="btn btn-default" data-type="rg">RG</button>
+					<button type="button" class="btn btn-default" data-type="sd">SD</button>
+				</div>
+				<button type="button" class="btn btn-default js-spiderPageListBtn">SpiderPageList</button>
+				<button type="button" class="btn btn-default js-spiderPageItemsBtn">SpiderPageItems</button>
 			</div>
-			<button type="button" class="btn btn-default js-spiderPage">SpiderPage</button>
 			
-			<table class="table table-bordered table-condensed js-itemList">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>title</th>
-						<th>coverImg</th>
-						<th>detailImg</th>
-						<th>status</th>
-						<th>open</th>
-						<th>operation</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
+			<div class="js-itemList">
+			</div>
 
 			<nav aria-label="...">
 				<ul class="pager">
@@ -75,158 +65,56 @@
 		</div>
 		
 		<script type="text/template" id="listTemplate">
-			<tr>
-				<td>{id}</td>
-				<td>{title}</td>
-				<td><div class="img-preview"><img src="{coverImg}"></div></td>
-				<td><div class="img-preview"><img src="{detailImg}"></div></td>
-				<td>{statusStr}</td>
-				<td>{openStr}</td>
-				<td data-itemid="{id}">
-					<button type="button" class="btn btn-default btn-sm js-toggle">切换</button>
-					<button type="button" class="btn btn-default btn-sm js-spider">爬取</button>
-				</td>
-			</tr>
+			<table class="table table-bordered table-condensed ">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>title</th>
+						<th>coverImg</th>
+						<th>detailImg</th>
+						<th>status</th>
+						<th>open</th>
+						<th>operation</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{each items as item}}
+						<tr>
+							<td>{{item.id}}</td>
+							<td>{{item.title}}</td>
+							<td><div class="img-preview"><img src="{{item.coverImgs}}"></div></td>
+							<td><div class="img-preview"><img src="{{item.detailImgs}}"></div></td>
+							<td>
+								{{if item.status==0}}
+									<span>初始</span>
+								{{/if}}
+								{{if item.status==1}}
+									<span style="color:#449d44;">成功</span>
+								{{/if}}
+								{{if item.status==2}}
+									<span style="color:#c9302c;">失败</span>
+								{{/if}}
+							</td>
+							<td>
+								{{if item.open}}
+									<span style="color:#449d44;">开启</span>
+								{{else}}
+									<span>关闭</span>
+								{{/if}}
+							</td>
+							<td data-itemid="{{item.id}}">
+								<button type="button" class="btn btn-default btn-sm js-toggle">toggle</button>
+								<button type="button" class="btn btn-default btn-sm js-spider">spider</button>
+							</td>
+						</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			
 		</script>
 		<script type="text/javascript" src="/assets/jquery/jquery-3.4.1.min.js"></script>
 		<script type="text/javascript" src="/assets/bootstrap/js/bootstrap.min.js"></script>
-		<script type="text/javascript">
-			({
-				init: function() {
-					this.type = '';
-					this.page = 1;
-					this.items = {};
-					this.$itemList = $('.js-itemList');
-					this.$pager = $('.pager');
-					this.template = $('#listTemplate').html();
-					this.$tabChange = $('.js-tabChange');
-					this.$spiderPage = $('.js-spiderPage');
-					
-					this.initFunction();
-					
-				},
-				initFunction: function() {
-					var self = this;
-					self.$tabChange.on('click', '.btn', function() {
-						var type = $(this).data('type');
-						if (self.type == type) {
-							return;
-						}
-						
-						$('.breadcrumb .active').text($(this).text());
-						self.type = type;
-						self.page = 1;
-						self.listItems(self.type, self.page);
-					});
-					self.$pager.on('click', '.previous:not(.disabled) a', function() {
-						self.page -= 1;
-						if (self.page < 1) {
-							self.page = 1;
-							return;
-						}
-						self.listItems(self.type, self.page);
-					});
-					self.$pager.on('click', '.next:not(.disabled) a', function() {
-						self.page += 1;
-						self.listItems(self.type, self.page);
-					});
-					self.$itemList.on('click', '.js-toggle:not(.disabled)', function() {
-						$(this).addClass('disabled');
-						
-						var id = $(this).parent().data('itemid');
-						var item = self.items[id];
-						$.get('/console/spider/toggleOpen?id=' + item.id, function(resp) {
-							if (resp.code == 0) {
-								self.listItems(self.type, self.page);
-							} else {
-								alert('error: ' + resp.errorMsg);
-							}
-						});
-						
-					});
-					self.$itemList.on('click', '.js-spider:not(.disabled)', function() {
-						$(this).addClass('disabled');
-						
-						var id = $(this).parent().data('itemid');
-						var item = self.items[id];
-						$.get('/console/spider/spiderItem?id=' + item.id, function(resp) {
-							if (resp.code == 0) {
-								self.listItems(self.type, self.page);
-							} else {
-								alert('error: ' + resp.errorMsg);
-							}
-						});
-					});
-					self.$spiderPage.click(function() {
-						if ($(this).hasClass('disabled')) {
-							return;
-						}
-						$(this).addClass('disabled');
-						console.log(self.items);
-					});
-				},
-				listItems: function(type, page) {
-					var self = this;
-					var url = '/console/spider/getItems?type={type}&page={page}&size=10';
-					url = url.replace('{type}', type).replace('{page}', page);
-					$.get(url, function (resp) {
-						console.log(resp);
-						var pageInfo = resp.data;
-						if (pageInfo.hasPreviousPage) {
-							self.$pager.find('.previous').removeClass('disabled');
-						} else {
-							self.$pager.find('.previous').addClass('disabled');
-						}
-						if (pageInfo.hasNextPage) {
-							self.$pager.find('.next').removeClass('disabled');
-						} else {
-							self.$pager.find('.next').addClass('disabled');
-						}
-						self.$pager.find('.active a').text(pageInfo.pageNum + '/' + pageInfo.pages + '_(' + pageInfo.total + ')');
-						
-						self.items = {};
-						var items = pageInfo.list;
-						for (var item of items) {
-							self.items[item.id] = item;
-							var status = item.status;
-							if (status == 0) {
-								item.statusStr = '<span>初始</span>';
-							} else if (status == 1) {
-								item.statusStr = '<span style="color:#449d44;">成功</span>';
-							} else if (status == 2) {
-								item.statusStr = '<span style="color:#c9302c;">失败</span>';
-							}
-							var open = item.open;
-							if (open) {
-								item.openStr = '<span style="color:#449d44;">开启</span>';
-							} else {
-								item.openStr = '<span>关闭</span>';
-							}
-						}
-						var html = self.render(items);
-						self.$itemList.find('tbody').html(html);
-					});
-				},
-				render: function(obj) {
-					var template = this.template;
-					var html = '';
-					var items = [];
-					if (Array.isArray(obj)) {
-						items = obj;
-					} else {
-						items.push(obj);
-					}
-					for (var item of items) {
-						var line = template;
-						for (var k in item) {
-							line = line.replaceAll('{' + k + '}', item[k]);
-						}
-						html += line;
-					}
-					return html;
-				}
-				//end
-			}).init();
-		</script>
+		<script type="text/javascript" src="/assets/js/art-template.js"></script>
+		<script type="text/javascript" src="/assets/js/item-list.js"></script>
 	</body>
 </html>

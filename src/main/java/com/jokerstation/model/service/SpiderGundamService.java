@@ -94,6 +94,7 @@ public class SpiderGundamService {
 					}
 					
 					item.setType(type);
+					item.setOpen(false);
 					item.setCreated(new Date());
 					modelItemMapper.insert(item);
 					logger.info("insert item: " + item.getTitle());

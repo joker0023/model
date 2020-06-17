@@ -30,7 +30,8 @@ public class ControllerExceptionHandler {
 			response.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			logger.error(exception.getMessage(), exception);
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.setStatus(HttpServletResponse.SC_OK);
 		}
 		
 		return new ResultModel(code, message);

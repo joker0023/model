@@ -33,31 +33,18 @@ public class SpiderController {
 	@Resource
 	private ThreadPoolTaskExecutor downloadPool = new ThreadPoolConfig().downloadPool();
 
-	@RequestMapping("/pg")
-	public ResultModel spiderPG() throws Exception {
-		logger.info("spider pg...");
-		spiderGundamService.spiderPG();
-		return new ResultModel();
-	}
-	
-	@RequestMapping("/mg")
-	public ResultModel spiderMG() throws Exception {
-		logger.info("spider mg...");
-		spiderGundamService.spiderMG();
-		return new ResultModel();
-	}
-	
-	@RequestMapping("/rg")
-	public ResultModel spiderRG() throws Exception {
-		logger.info("spider rg...");
-		spiderGundamService.spiderRG();
-		return new ResultModel();
-	}
-	
-	@RequestMapping("/sd")
-	public ResultModel spiderSD() throws Exception {
-		logger.info("spider sd...");
-		spiderGundamService.spiderSD();
+	@RequestMapping("/spiderList")
+	public ResultModel spiderList(String type) throws Exception {
+		logger.info("spider " + type + "...");
+		if ("pg".equalsIgnoreCase(type)) {
+			spiderGundamService.spiderPG();
+		} else if ("mg".equalsIgnoreCase(type)) {
+			spiderGundamService.spiderMG();
+		} else if ("rg".equalsIgnoreCase(type)) {
+			spiderGundamService.spiderRG();
+		} else if ("sd".equalsIgnoreCase(type)) {
+			spiderGundamService.spiderSD();
+		}
 		return new ResultModel();
 	}
 	
@@ -77,6 +64,7 @@ public class SpiderController {
 					logger.error("spider one in list error", e);
 				}
 			}
+			logger.info("spiderItems over: " + ids);
 		});
 		
 		return new ResultModel();
