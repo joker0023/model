@@ -23,10 +23,6 @@ public class ModelItem implements Serializable {
 	
 	private String localCoverImg;
 	
-	private String detailImg;
-	
-	private String localDetailImg;
-	
 	private String type;
 	
 	/**

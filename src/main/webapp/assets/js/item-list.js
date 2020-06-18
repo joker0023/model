@@ -9,6 +9,7 @@
 		this.tplSource = $('#listTemplate').html();
 		this.$tabChange = $('.js-tabChange');
 		this.$operationContainer = $('.js-operationContainer');
+		this.$modal = $('.detail-img-modal');
 		
 		this.initFunction();
 		
@@ -62,6 +63,25 @@
 					self.listItems(self.type, self.page);
 				} else {
 					alert('error: ' + resp.errorMsg);
+				}
+			});
+		}).on('click', '.js-title', function() {
+			var itemId = $(this).data('itemid');
+			$.get('/console/spider/getItemImgs?itemId=' + itemId, function(resp) {
+				if (resp.code == 0) {
+					console.log(resp.data);
+					var itemImgs = resp.data;
+					if (itemImgs.length == 0) {
+						return;
+					}
+					var html = '';
+					for (itemImg of itemImgs) {
+						var img = '<img src="' + itemImg.localDetailImg + '">';
+						html += img;
+					}
+					
+					self.$modal.find('.modal-body p').html(html);
+					self.$modal.modal('show');
 				}
 			});
 		});

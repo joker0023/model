@@ -5,6 +5,7 @@
 		this.$pageSwitch = $('.js-pageSwitch');
 		this.itemListTpl = $('#itemListTpl').html();
 		this.$moreBtn = $('.js-moreBtn');
+		this.$modal = $('.detail-img-modal');
 		this.items = [];
 		this.size = 20;
 		this.initFunction();
@@ -25,6 +26,26 @@
 			if (scrollHeight > clientHeight && scrollTop + clientHeight === scrollHeight) {
 				self.loadItemList();
 			}
+		});
+		$(document).on('click', '.js-cover-img', function() {
+			var itemId = $(this).data('itemid');
+			$.get('/console/spider/getItemImgs?itemId=' + itemId, function(resp) {
+				if (resp.code == 0) {
+					console.log(resp.data);
+					var itemImgs = resp.data;
+					if (itemImgs.length == 0) {
+						return;
+					}
+					var html = '';
+					for (itemImg of itemImgs) {
+						var img = '<img src="' + itemImg.localDetailImg + '">';
+						html += img;
+					}
+					
+					self.$modal.find('.modal-body p').html(html);
+					self.$modal.modal('show');
+				}
+			});
 		});
 		self.$moreBtn.click(function() {
 			self.loadItemList();

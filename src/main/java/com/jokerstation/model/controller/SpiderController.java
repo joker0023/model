@@ -17,6 +17,7 @@ import com.github.pagehelper.PageInfo;
 import com.jokerstation.common.data.ErrorCode;
 import com.jokerstation.common.data.ResultModel;
 import com.jokerstation.model.config.ThreadPoolConfig;
+import com.jokerstation.model.pojo.ItemImg;
 import com.jokerstation.model.pojo.ModelItem;
 import com.jokerstation.model.service.SpiderGundamService;
 
@@ -79,12 +80,12 @@ public class SpiderController {
 		return new ResultModel();
 	}
 	
-	@RequestMapping("/spiderItemSimple")
+	@RequestMapping("/spiderItemImg")
 	public ResultModel spiderItemSimple(Long id) throws Exception {
 		if (null == id) {
 			return new ResultModel(ErrorCode.PARAM_ILLEGAL.getCode(), ErrorCode.PARAM_ILLEGAL.getMsg());
 		}
-		spiderGundamService.spiderItemSimple(id);
+		spiderGundamService.spiderItemImg(id);
 		return new ResultModel();
 	}
 	
@@ -107,5 +108,14 @@ public class SpiderController {
 		}
 		PageInfo<ModelItem> pageInfo = spiderGundamService.getModelItems(type, page, size);
 		return new ResultModel(pageInfo);
+	}
+	
+	@RequestMapping("/getItemImgs")
+	public ResultModel getItemImgs(Long itemId) {
+		if (null == itemId) {
+			return new ResultModel(ErrorCode.PARAM_ILLEGAL.getCode(), ErrorCode.PARAM_ILLEGAL.getMsg());
+		}
+		List<ItemImg> itemImgs = spiderGundamService.listItemImg(itemId);
+		return new ResultModel(itemImgs);
 	}
 }

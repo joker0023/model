@@ -41,11 +41,16 @@ public class SpiderTest {
 	public static void main(String[] args) throws Exception {
 //		spider();
 		
-		String url = "https://detail.tmall.com/item.htm?id=16009624681&rn=147c03bb025961083b93ec75dcc13969&abbucket=";
-		Map<String, String> header = getHeader(null);
-		header.put("Host", "detail.tmall.com");
-		String result = WebUtil.doGet(url, header);
-		
+		String desc = "var desc='<p><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN019IlZqC1K4sWZcCGRB_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN019RMRJH1K4sWaJTYw9_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN014NEwkX1K4sWeGho1x_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN01Bzijim1K4sX1z5D7w_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN013YGfLM1K4sX26wsPA_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i4/833261111/O1CN01qFwAqg1K4sWbxN80g_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN01eyydFh1K4sWckGinA_!!833261111.jpg\" align=\"absmiddle\"> </p>';\r\n" + 
+				"";
+		System.out.println(desc);
+		String html = getMiddleStr(desc, "'", "'");
+		System.out.println(html.trim());
+		Document doc = Jsoup.parse(html);
+		Elements imgs = doc.select("img");
+		for (Element img : imgs) {
+			System.out.println(img.attr("src"));
+		}
 		System.out.println("== over ==");
 	}
 	

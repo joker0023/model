@@ -16,7 +16,7 @@ public class GundamService {
 	private ModelItemMapper modelItemMapper;
 	
 	public List<ModelItem> listOpenItems(String type) {
-		PageHelper.orderBy("id");
+		PageHelper.orderBy("id desc");
 		ModelItem record = new ModelItem();
 		record.setOpen(true);
 		record.setType(type);

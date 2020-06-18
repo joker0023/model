@@ -3,6 +3,7 @@ package com.jokerstation.model.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,9 @@ import com.github.pagehelper.PageInfo;
 import com.jokerstation.common.exception.BizException;
 import com.jokerstation.common.util.JsonUtils;
 import com.jokerstation.common.util.WebUtil;
+import com.jokerstation.model.mapper.ItemImgMapper;
 import com.jokerstation.model.mapper.ModelItemMapper;
+import com.jokerstation.model.pojo.ItemImg;
 import com.jokerstation.model.pojo.ModelItem;
 
 @Service
@@ -38,6 +41,9 @@ public class SpiderGundamService {
 	
 	@Autowired
 	private ModelItemMapper modelItemMapper;
+	
+	@Autowired
+	private ItemImgMapper itemImgMapper;
 	
 	@Value("${spider.url.pg}")
 	private String pgPageUrl;
@@ -69,41 +75,38 @@ public class SpiderGundamService {
 	
 	private void spiderOneType(String type, String url) throws Exception {
 		Random random = new Random();
+		List<ModelItem> allItemList = new ArrayList<>();
 		for (int i = 1; i < 50; i++) {
 			String pageUrl = url;
 			if (i > 1) {
 				pageUrl = url + "?pageNo=" + i;
 			}
-			try {
-				Thread.sleep(random.nextInt(3000) + 2000);
-				List<ModelItem> itemList = spiderPage(pageUrl);
-				logger.info("itemList-size: " + itemList.size());
-				
-				if (itemList.size() == 0) {
-					break;
-				}
-				
-				for (ModelItem item : itemList) {
-					if (item.getTitle().contains("预定") || item.getTitle().contains("贴纸")) {
-						continue;
-					}
-					
-					ModelItem exists = getModelItemByTitle(item.getTitle());
-					if (null != exists) {
-						continue;
-					}
-					
-					item.setType(type);
-					item.setOpen(false);
-					item.setCreated(new Date());
-					modelItemMapper.insert(item);
-					logger.info("insert item: " + item.getTitle());
-				}
-			}catch (BizException e) {
-				logger.error("爬取一页出错: " + pageUrl + ", " + e.getMessage());
-			} catch (Exception e) {
-				logger.error("爬取一页出错: " + pageUrl, e);
+			Thread.sleep(random.nextInt(3000) + 2000);
+			List<ModelItem> itemList = spiderPage(pageUrl);
+			logger.info("itemList-size: " + itemList.size());
+			if (itemList.size() == 0) {
+				break;
 			}
+			
+			allItemList.addAll(itemList);
+		}
+		
+		Collections.reverse(allItemList);
+		for (ModelItem item : allItemList) {
+			if (item.getTitle().contains("预定") || item.getTitle().contains("贴纸")) {
+				continue;
+			}
+			
+			ModelItem exists = getModelItemByTitle(item.getTitle());
+			if (null != exists) {
+				continue;
+			}
+			
+			item.setType(type);
+			item.setOpen(false);
+			item.setCreated(new Date());
+			modelItemMapper.insert(item);
+			logger.info("insert item: " + item.getTitle());
 		}
 		
 		logger.info("爬取一个类型完成type: " + type);
@@ -197,22 +200,29 @@ public class SpiderGundamService {
 			String result = WebUtil.doGet(modelItem.getUrl(), header);
 			Document doc = Jsoup.parse(result);
 			
-//			String title = getTitle(doc);
 			String coverImg = getCoverImg(doc);
-			String detailImg = getDetailImg(doc);
+			List<String> detailImgs = getDetailImgs(doc);
 			
 			deleteOldLocalImg(modelItem);
+			delItemImg(modelItem.getId());
 			
 			String dir = "/gundam/" + modelItem.getType();
 			modelItem.setCoverImg(coverImg);
-			modelItem.setDetailImg(detailImg);
-			String localCoverImg = downloadImg(dir, coverImg);
+			String localCoverImg = downloadImg(dir, modelItem.getCoverImg());
 			modelItem.setLocalCoverImg(localCoverImg);
-			String localDetailImg = downloadImg(dir, detailImg);
-			modelItem.setLocalDetailImg(localDetailImg);
 			modelItem.setStatus(1);
-			
 			modelItemMapper.updateByPrimaryKey(modelItem);
+			
+			for (String detailImg : detailImgs) {
+				ItemImg itemImg = new ItemImg();
+				itemImg.setItemId(modelItem.getId());
+				itemImg.setDetailImg(detailImg);
+				String localDetailImg = downloadImg(dir, detailImg);
+				itemImg.setLocalDetailImg(localDetailImg);
+				itemImg.setCreated(new Date());
+				itemImgMapper.insert(itemImg);
+			}
+			
 			logger.info("spider item success: " + modelItem.getUrl());
 		} catch (Exception e) {
 			modelItem.setStatus(2);
@@ -221,23 +231,28 @@ public class SpiderGundamService {
 		}
 	}
 	
-	public void spiderItemSimple(Long id) throws Exception {
+	public void spiderItemImg(Long id) throws Exception {
 		ModelItem modelItem = modelItemMapper.selectByPrimaryKey(id);
 		if (null == modelItem) {
 			return;
 		}
 		try {
+			logger.info("spider item img: " + modelItem.getId());
+			
 			deleteOldLocalImg(modelItem);
 			
 			String dir = "/gundam/" + modelItem.getType();
 			String localCoverImg = downloadImg(dir, modelItem.getCoverImg());
 			modelItem.setLocalCoverImg(localCoverImg);
-			String localDetailImg = downloadImg(dir, modelItem.getDetailImg());
-			modelItem.setLocalDetailImg(localDetailImg);
 			modelItem.setStatus(1);
-			
 			modelItemMapper.updateByPrimaryKey(modelItem);
-			logger.info("spider item simple success: " + modelItem.getId());
+			
+			List<ItemImg> itemImgs = listItemImg(modelItem.getId());
+			for (ItemImg itemImg : itemImgs) {
+				String localDetailImg = downloadImg(dir, itemImg.getDetailImg());
+				itemImg.setLocalDetailImg(localDetailImg);
+				itemImgMapper.updateByPrimaryKey(itemImg);
+			}
 		} catch (Exception e) {
 			modelItem.setStatus(2);
 			modelItemMapper.updateByPrimaryKey(modelItem);
@@ -267,12 +282,16 @@ public class SpiderGundamService {
 			}
 			modelItem.setLocalCoverImg(null);
 		}
-		if (StringUtils.isNotBlank(modelItem.getLocalDetailImg())) {
-			File file = new File(BASEDIR + modelItem.getLocalDetailImg());
-			if (file.exists()) {
-				file.delete();
+		
+		List<ItemImg> itemImgs = listItemImg(modelItem.getId());
+		for (ItemImg itemImg : itemImgs) {
+			if (StringUtils.isNotBlank(itemImg.getLocalDetailImg())) {
+				File file = new File(BASEDIR + itemImg.getLocalDetailImg());
+				if (file.exists()) {
+					file.delete();
+				}
+//				itemImg.setLocalDetailImg(null);
 			}
-			modelItem.setLocalDetailImg(null);
 		}
 	}
 	
@@ -291,7 +310,7 @@ public class SpiderGundamService {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private String getDetailImg(Document doc) throws Exception {
+	private List<String> getDetailImgs(Document doc) throws Exception {
 		String json = getMiddleStr(doc.html(), "TShop.Setup(", ")").trim();
 		Map bean = JsonUtils.toBean(json, Map.class);
 		Map<String, String> api = (Map<String, String>)bean.get("api");
@@ -310,8 +329,15 @@ public class SpiderGundamService {
 		Map<String, String> header = getHeader(null);
 		header.put("Host", "descnew.taobao.com");
 		String descJson = WebUtil.doGet(descUrl, header);
-		String detailImg = getMiddleStr(descJson, "src=\"", "\"");
-		return detailImg;
+		
+		List<String> imgList = new ArrayList<>();
+		String html = getMiddleStr(descJson, "'", "'");
+		Document descDoc = Jsoup.parse(html);
+		Elements imgs = descDoc.select("img");
+		for (Element img : imgs) {
+			imgList.add(img.attr("src"));
+		}
+		return imgList;
 	}
 	
 	private String downloadImg(String dir, String url) throws Exception {
@@ -369,7 +395,7 @@ public class SpiderGundamService {
 	
 	public PageInfo<ModelItem> getModelItems(String type, int page, int size) {
 		PageHelper.startPage(page, size);
-		PageHelper.orderBy("id");
+		PageHelper.orderBy("id desc");
 		
 		if (null == type) {
 			return new PageInfo<>(modelItemMapper.selectAll());
@@ -378,5 +404,17 @@ public class SpiderGundamService {
 			record.setType(type);;
 			return new PageInfo<>(modelItemMapper.select(record));
 		}
+	}
+	
+	public List<ItemImg> listItemImg(Long itemId) {
+		ItemImg record = new ItemImg();
+		record.setItemId(itemId);
+		return itemImgMapper.select(record);
+	}
+	
+	private void delItemImg(Long itemId) {
+		ItemImg record = new ItemImg();
+		record.setItemId(itemId);
+		itemImgMapper.delete(record);
 	}
 }

@@ -95,12 +95,24 @@
 			</div>
 		</div>
 		
+		<div class="modal fade detail-img-modal" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-body">
+						<p></p>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 		
 		<script type="text/template" id="itemListTpl">
 			{{each items as item}}
 				<div class="item col-lg-3 col-md-3 col-sm-4 col-xs-6">
 					<div class="img-border">
-						<img alt="cover" src="{{item.localCoverImg}}">
+						<img alt="cover" src="{{item.localCoverImg}}" class="js-cover-img" data-itemid="{{item.id}}">
 					</div>
 					<div class="item-name" title="{{item.title}}">{{item.title}}</div>
 				</div>
