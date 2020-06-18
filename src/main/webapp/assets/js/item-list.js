@@ -54,7 +54,8 @@
 				}
 			});
 		}).on('click', '.js-spider:not(.disabled)', function() {
-			$(this).addClass('disabled');
+			var $btn = $(this);
+			$btn.addClass('disabled');
 			
 			var id = $(this).parent().data('itemid');
 			var item = self.items[id];
@@ -63,6 +64,7 @@
 					self.listItems(self.type, self.page);
 				} else {
 					alert('error: ' + resp.errorMsg);
+					$btn.removeClass('disabled');
 				}
 			});
 		}).on('click', '.js-title', function() {
@@ -90,12 +92,14 @@
 			if (!self.type) {
 				return;
 			}
-			$(this).addClass('disabled');
+			var $btn = $(this);
+			$btn.addClass('disabled');
 			$.post('/console/spider/spiderList', {type: self.type}, function(resp) {
 				if (resp.code == 0) {
 					self.listItems(self.type, self.page);
 				} else {
 					alert('error: ' + resp.errorMsg);
+					$btn.removeClass('disabled');
 				}
 			});
 		}).on('click', '.js-spiderPageItemsBtn:not(.disabled)', function() {

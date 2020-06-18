@@ -58,17 +58,28 @@ public class SpiderController {
 			Random random = new Random();
 			List<String> idLsit = Arrays.asList(ids.split(","));
 			for (String id: idLsit) {
-				try {
-					Thread.sleep(random.nextInt(3000) + 2000);
-					spiderGundamService.spiderItem(Long.valueOf(id));
-				} catch (Exception e) {
-					logger.error("spider one in list error", e);
-				}
+				spiderItemRetry(Long.valueOf(id), random.nextInt(3000) + 2000l);
 			}
 			logger.info("spiderItems over: " + ids);
 		});
 		
 		return new ResultModel();
+	}
+	
+	private void spiderItemRetry(Long id, Long sleepTime) {
+		long maxTime = 180 * 1000;
+		try {
+			Thread.sleep(sleepTime);
+			spiderGundamService.spiderItem(Long.valueOf(id));
+		} catch (Exception e) {
+			if (e.getMessage().contains("internal_error") && sleepTime < maxTime) {
+				sleepTime += 60000;
+				logger.warn("internal_error, sleep " + sleepTime + "s");
+				spiderItemRetry(id, sleepTime);
+			} else {
+				logger.error("spider item error", e);
+			}
+		}
 	}
 	
 	@RequestMapping("/spiderItem")

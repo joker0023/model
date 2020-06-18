@@ -4,8 +4,6 @@ CREATE TABLE `model_item` (
   `title` varchar(128) DEFAULT NULL,
   `cover_img` varchar(256) DEFAULT NULL,
   `local_cover_img` varchar(256) DEFAULT NULL,
-  `detail_img` varchar(256) DEFAULT NULL,
-  `local_detail_img` varchar(256) DEFAULT NULL,
   `type` varchar(16) DEFAULT NULL,
   `status` tinyint(4) DEFAULT NULL,
   `open` bit(1) DEFAULT NULL,

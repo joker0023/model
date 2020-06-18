@@ -32,8 +32,8 @@ import com.jokerstation.common.util.WebUtil;
 import com.jokerstation.model.BootApplication;
 import com.jokerstation.model.service.SpiderGundamService;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = BootApplication.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = BootApplication.class)
 public class SpiderTest {
 	
 	private static Logger logger = LoggerFactory.getLogger(SpiderTest.class);
@@ -41,16 +41,15 @@ public class SpiderTest {
 	public static void main(String[] args) throws Exception {
 //		spider();
 		
-		String desc = "var desc='<p><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN019IlZqC1K4sWZcCGRB_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN019RMRJH1K4sWaJTYw9_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN014NEwkX1K4sWeGho1x_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i3/833261111/O1CN01Bzijim1K4sX1z5D7w_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN013YGfLM1K4sX26wsPA_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i4/833261111/O1CN01qFwAqg1K4sWbxN80g_!!833261111.jpg\" align=\"absmiddle\"><img src=\"https://img.alicdn.com/imgextra/i1/833261111/O1CN01eyydFh1K4sWckGinA_!!833261111.jpg\" align=\"absmiddle\"> </p>';\r\n" + 
-				"";
-		System.out.println(desc);
-		String html = getMiddleStr(desc, "'", "'");
-		System.out.println(html.trim());
-		Document doc = Jsoup.parse(html);
-		Elements imgs = doc.select("img");
-		for (Element img : imgs) {
-			System.out.println(img.attr("src"));
+		String file = "C:\\Users\\qiaoh\\Desktop\\aabb.txt";
+		List<String> lines = IOUtils.readLines(new FileInputStream(file));
+		String result = "";
+		for (String line : lines) {
+			result += line;
 		}
+		String json = getMiddleStr(result, "TShop.Setup(", ");").trim();
+		System.out.println(json);
+		
 		System.out.println("== over ==");
 	}
 	

@@ -93,7 +93,7 @@ public class SpiderGundamService {
 		
 		Collections.reverse(allItemList);
 		for (ModelItem item : allItemList) {
-			if (item.getTitle().contains("预定") || item.getTitle().contains("贴纸")) {
+			if (item.getTitle().contains("预定") || item.getTitle().contains("贴纸") || item.getTitle().contains("预约")) {
 				continue;
 			}
 			
@@ -311,7 +311,7 @@ public class SpiderGundamService {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<String> getDetailImgs(Document doc) throws Exception {
-		String json = getMiddleStr(doc.html(), "TShop.Setup(", ")").trim();
+		String json = getMiddleStr(doc.html(), "TShop.Setup(", ");").trim();
 		Map bean = JsonUtils.toBean(json, Map.class);
 		Map<String, String> api = (Map<String, String>)bean.get("api");
 		String descUrl = api.get("descUrl");
