@@ -58,7 +58,7 @@ public class SpiderController {
 			Random random = new Random();
 			List<String> idLsit = Arrays.asList(ids.split(","));
 			for (String id: idLsit) {
-				spiderItemRetry(Long.valueOf(id), random.nextInt(3000) + 2000l);
+				spiderItemRetry(Long.valueOf(id), random.nextInt(5000) + 60000l);
 			}
 			logger.info("spiderItems over: " + ids);
 		});

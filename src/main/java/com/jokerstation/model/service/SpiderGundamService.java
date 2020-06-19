@@ -301,7 +301,13 @@ public class SpiderGundamService {
 	}
 	
 	private String getCoverImg(Document doc) throws Exception {
-		String imgSrc = doc.select("#J_UlThumb").select("li").get(1).select("img").attr("src");
+		String imgSrc = null;
+		Elements liEles = doc.select("#J_UlThumb").select("li");
+		if (liEles.size() > 1) {
+			imgSrc = liEles.get(1).select("img").attr("src");
+		} else {
+			imgSrc = liEles.get(0).select("img").attr("src");
+		}
 		if (imgSrc.startsWith("//")) {
 			imgSrc = "https:" + imgSrc;
 		}

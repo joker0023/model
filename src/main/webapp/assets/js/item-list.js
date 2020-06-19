@@ -2,7 +2,7 @@
 	init: function() {
 		this.type = '';
 		this.page = 1;
-		this.size = 10;
+		this.size = 20;
 		this.items = {};
 		this.$itemList = $('.js-itemList');
 		this.$pager = $('.pager');
@@ -36,9 +36,12 @@
 				return;
 			}
 			self.listItems(self.type, self.page);
+			$('html,body').animate({scrollTop:0}, 100);
 		}).on('click', '.next:not(.disabled) a', function() {
 			self.page += 1;
 			self.listItems(self.type, self.page);
+//			document.documentElement.scrollTop = 0;
+			$('html,body').animate({scrollTop:0}, 100);
 		});
 		
 		self.$itemList.on('click', '.js-toggle:not(.disabled)', function() {
@@ -111,8 +114,13 @@
 				return;
 			}
 			ids = ids.substring(1);
-			$(this).addClass('disabled');
-			$.post('/console/spider/spiderItems', {ids: ids}, function(resp) {});
+			var $btn = $(this);
+			$btn.addClass('disabled');
+			$.post('/console/spider/spiderItems', {ids: ids}, function(resp) {
+				if (resp.code == 0) {
+					$btn.removeClass('disabled');
+				}
+			});
 		});
 	},
 	listItems: function(type, page) {
