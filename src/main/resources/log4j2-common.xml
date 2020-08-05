@@ -10,6 +10,7 @@
         	filePattern="${LOG_HOME}/${APP_NAME}/common-%d{yyyy-MM-dd}.log">
     		<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %5p %c:%L[%t] - [%X{trace}]%m%n"/>
     		<Policies>
+    			<SizeBasedTriggeringPolicy size="512MB" />
     			<TimeBasedTriggeringPolicy modulate="true" interval="1"/>
     		</Policies>
     		<DefaultRolloverStrategy max="10"/>
