@@ -8,6 +8,7 @@ body {
 .navbar-default {
 	border-color: #F0F5F9;
 	background: none;
+	font-family: "Georgia"
 }
 
 .navbar-default .navbar-toggle {
@@ -32,6 +33,12 @@ body {
 	font-size: 40px;
 	line-height: 40px;
 	color: #0065B1;
+}
+.navbar-default .navbar-brand img {
+	display: inline-block;
+	width: 70px;
+	height: 70px;
+	margin-top: -15px
 }
 
 .navbar-default .nav>li>a {

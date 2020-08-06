@@ -29,7 +29,7 @@
 		});
 		$(document).on('click', '.js-cover-img', function() {
 			var itemId = $(this).data('itemid');
-			$.get('/console/spider/getItemImgs?itemId=' + itemId, function(resp) {
+			$.get('/gundam/getItemImgs?itemId=' + itemId, function(resp) {
 				if (resp.code == 0) {
 					console.log(resp.data);
 					var itemImgs = resp.data;
