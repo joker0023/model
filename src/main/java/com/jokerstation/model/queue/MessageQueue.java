@@ -26,4 +26,8 @@ public class MessageQueue {
 		}
 		return null;
 	}
+	
+	public long size() {
+		return stringRedisTemplate.opsForList().size(MESSAGE_QUEUE_KEY);
+	}
 }
