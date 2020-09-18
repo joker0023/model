@@ -126,3 +126,14 @@ body {
 .detail-img-modal .modal-body img {
 	width: 100%;
 }
+
+.beian {
+	color: #999;
+	text-align: right;
+	font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+	margin-top: 100px;
+	padding: 0 30px;
+}
+.beian a {
+	color: #999;
+}
