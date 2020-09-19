@@ -3,6 +3,7 @@ body {
 	min-height: 100vh;
 	font-family: "Comic Sans MS", cursive, sans-serif;
 	/*background-color: #f3f7fb;*/
+	position: relative;
 }
 
 .navbar-default {
@@ -127,13 +128,23 @@ body {
 	width: 100%;
 }
 
+.footer {
+	border-top: 1px solid #f0f0f0;
+	padding-top: 80px;
+	padding-bottom: 10px;
+	background-color: #F0F5F9;
+}
 .beian {
 	color: #999;
-	text-align: right;
+	text-align: center;
 	font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
-	margin-top: 100px;
-	padding: 0 30px;
 }
 .beian a {
 	color: #999;
+}
+
+#cnzz_stat_icon_1279217749 {
+	position: absolute;
+	left: 0;
+	bottom: 0;
 }

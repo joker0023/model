@@ -13,12 +13,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.pagehelper.PageInfo;
 import com.jokerstation.common.data.ErrorCode;
 import com.jokerstation.common.data.ResultModel;
 import com.jokerstation.model.config.ThreadPoolConfig;
-import com.jokerstation.model.pojo.ItemImg;
-import com.jokerstation.model.pojo.ModelItem;
 import com.jokerstation.model.service.SpiderGundamService;
 
 
@@ -100,33 +97,5 @@ public class SpiderController {
 		return new ResultModel();
 	}
 	
-	@RequestMapping("/toggleOpen")
-	public ResultModel toggleOpen(Long id) throws Exception {
-		if (null == id) {
-			return new ResultModel(ErrorCode.PARAM_ILLEGAL.getCode(), ErrorCode.PARAM_ILLEGAL.getMsg());
-		}
-		spiderGundamService.toggleOpen(id);
-		return new ResultModel();
-	}
 	
-	@RequestMapping("/getItems")
-	public ResultModel getItems(String type, Integer page, Integer size) {
-		if (null == page) {
-			page = 1;
-		}
-		if (null == size) {
-			size = 10;
-		}
-		PageInfo<ModelItem> pageInfo = spiderGundamService.getModelItems(type, page, size);
-		return new ResultModel(pageInfo);
-	}
-	
-	@RequestMapping("/getItemImgs")
-	public ResultModel getItemImgs(Long itemId) {
-		if (null == itemId) {
-			return new ResultModel(ErrorCode.PARAM_ILLEGAL.getCode(), ErrorCode.PARAM_ILLEGAL.getMsg());
-		}
-		List<ItemImg> itemImgs = spiderGundamService.listItemImg(itemId);
-		return new ResultModel(itemImgs);
-	}
 }

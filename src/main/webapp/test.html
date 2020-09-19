@@ -9,54 +9,17 @@
 </head>
 <body>
 	<div class="container">
-		<input name="msg" type="text" class="msg">
-		<input name="longitude" type="text" class="longitude">
-		<input name="latitude" type="text" class="latitude">
-		<button type="button" class="btn">send</button>
+		<form action="/console/item/addItem" method="post" enctype="multipart/form-data">
+			<input name="coverImgFile" type="file"><br/>
+			<input name="itemImgFile" type="file"><br/>
+			<input name="title" type="text"><br/>
+			<input name="type" type="text"><br/>
+			<button type="submit">ok</button>
+		</form>
 	</div>
 	
 	<script type="text/javascript" src="./assets/jquery/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript">
-		function guid() {
-			return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-				var r = Math.random() * 16 | 0,
-					v = c == 'x' ? r : (r & 0x3 | 0x8);
-				return v.toString(16);
-			});
-		}
-		
-		var sid = guid();
-		var socketUrl="ws://localhost:9090/ws/" + sid;
-        console.log(socketUrl);
-        var socket = new WebSocket(socketUrl);
-       	socket.onopen = function() {
-            console.log("onopen");
-        };
-        socket.onmessage = function(msg) {
-            console.log('onmessage', msg.data);
-        };
-        socket.onclose = function() {
-            console.log("onclose");
-        };
-        socket.onerror = function() {
-            console.error("onerror");
-        }
-        
-        $('.btn').click(function() {
-        	var msg = $('.msg').val();
-        	var longitude = $('.longitude').val();
-        	var latitude = $('.latitude').val();
-        	if (!msg || !latitude || !longitude) {
-        		return;
-        	}
-        	var text = JSON.stringify({
-        		message: msg,
-        		longitude: longitude,
-        		latitude: latitude,
-        		sid: sid
-        	});
-        	socket.send(text);
-        });
 	</script>
 </body>
 </html>

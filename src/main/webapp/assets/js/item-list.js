@@ -49,7 +49,7 @@
 			
 			var id = $(this).parent().data('itemid');
 			var item = self.items[id];
-			$.post('/console/spider/toggleOpen', {id: item.id}, function(resp) {
+			$.post('/console/item/toggleOpen', {id: item.id}, function(resp) {
 				if (resp.code == 0) {
 					self.listItems(self.type, self.page);
 				} else {
@@ -72,7 +72,7 @@
 			});
 		}).on('click', '.js-title', function() {
 			var itemId = $(this).data('itemid');
-			$.get('/console/spider/getItemImgs?itemId=' + itemId, function(resp) {
+			$.get('/console/item/getItemImgs?itemId=' + itemId, function(resp) {
 				if (resp.code == 0) {
 					console.log(resp.data);
 					var itemImgs = resp.data;
@@ -89,6 +89,25 @@
 					self.$modal.modal('show');
 				}
 			});
+		}).on('click', '.js-del', function() {
+			if (confirm('del?')) {
+				var itemId = $(this).parent().data('itemid');
+				$.get('/console/item/delItem?itemId=' + itemId, function(resp) {
+					if (resp.code == 0) {
+						self.listItems(self.type, self.page);
+					} else {
+						alert('error: ' + resp.errorMsg);
+					}
+				});
+			}
+		}).on('click', 'img', function() {
+			var src = $(this).attr('src');
+			if (!src) {
+				return;
+			}
+			var html = '<img src="' + src + '">';
+			self.$modal.find('.modal-body p').html(html);
+			self.$modal.modal('show');
 		});
 		
 		self.$operationContainer.on('click', '.js-spiderPageListBtn:not(.disabled)', function() {
@@ -121,11 +140,28 @@
 					$btn.removeClass('disabled');
 				}
 			});
+		}).on('click', '.js-addItemBtn:not(.disabled)', function() {
+			if (!self.type) {
+				return;
+			}
+			$('.add-item-modal').modal('show');
+			$('.add-item-modal').find('form input[name=type]').val(self.type);
+		});
+		$('.add-item-modal').on('click', '.btn-primary', function() {
+			var $form = $('.add-item-modal').find('form');
+			$form.ajaxSubmit(function(resp) {
+				$('.add-item-modal').modal('hide');
+				if (resp.code == 0) {
+					self.listItems(self.type, self.page);
+				} else {
+					alert('error: ' + resp.errorMsg);
+				}
+			});
 		});
 	},
 	listItems: function(type, page) {
 		var self = this;
-		var url = '/console/spider/getItems?type={type}&page={page}&size={size}';
+		var url = '/console/item/getItems?type={type}&page={page}&size={size}';
 		url = url.replace('{type}', type).replace('{page}', page).replace('{size}', self.size);
 		$.get(url, function (resp) {
 			console.log(resp);

@@ -24,8 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import com.jokerstation.common.exception.BizException;
 import com.jokerstation.common.util.JsonUtils;
 import com.jokerstation.common.util.WebUtil;
@@ -260,21 +258,9 @@ public class SpiderGundamService {
 		}
 	}
 	
-	public void toggleOpen(Long id) throws Exception {
-		ModelItem modelItem = modelItemMapper.selectByPrimaryKey(id);
-		if (null == modelItem) {
-			return;
-		}
-		Boolean open = modelItem.getOpen();
-		if (null != open && open) {
-			modelItem.setOpen(false);
-		} else {
-			modelItem.setOpen(true);
-		}
-		modelItemMapper.updateByPrimaryKey(modelItem);
-	}
 	
-	private void deleteOldLocalImg(ModelItem modelItem) {
+	
+	public void deleteOldLocalImg(ModelItem modelItem) {
 		if (StringUtils.isNotBlank(modelItem.getLocalCoverImg())) {
 			File file = new File(BASEDIR + modelItem.getLocalCoverImg());
 			if (file.exists()) {
@@ -393,24 +379,12 @@ public class SpiderGundamService {
 		return url;
 	}
 	
-	private ModelItem getModelItemByTitle(String title) {
+	public ModelItem getModelItemByTitle(String title) {
 		ModelItem example = new ModelItem();
 		example.setTitle(title);
 		return modelItemMapper.selectOne(example);
 	}
 	
-	public PageInfo<ModelItem> getModelItems(String type, int page, int size) {
-		PageHelper.startPage(page, size);
-		PageHelper.orderBy("id desc");
-		
-		if (null == type) {
-			return new PageInfo<>(modelItemMapper.selectAll());
-		} else {
-			ModelItem record = new ModelItem();
-			record.setType(type);;
-			return new PageInfo<>(modelItemMapper.select(record));
-		}
-	}
 	
 	public List<ItemImg> listItemImg(Long itemId) {
 		ItemImg record = new ItemImg();
